@@ -1,0 +1,20 @@
+#brand-name {
+    float: left;
+}
+#search-form {
+    float: left;
+    padding-left:25%;
+}
+#home-logout {
+    padding-left: 76%;
+}
+#login-button {
+    /*padding-left: 5%;*/
+    color: white;
+}
+#carousel {
+    height: 300px;
+}
+nav li h5 {
+    color: white;
+}
