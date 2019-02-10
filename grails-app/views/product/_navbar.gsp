@@ -37,17 +37,6 @@
                 <input type="submit" class="btn btn-success" value="Search">
             </g:formRemote>
 
-            %{--<g:formRemote name="myform1" class="form-inline my-2 ml-5 mr-5" update="result" url="[controller: 'product', action: 'searchProduct']">--}%
-                %{--<input class="form-control mr-sm-2" type="text" name="productToSearch" placeholder="Search">--}%
-                %{--<select name="category" class="form-control mr-sm-2">--}%
-                    %{--<option value="all">Categories</option>--}%
-                    %{--<g:each in="${categoryList}" status="i" var="category">--}%
-                        %{--<option value="${category}">${category}</option>--}%
-                    %{--</g:each>--}%
-                %{--</select>--}%
-                %{--<input class="btn btn-success" type="submit" value="Search"></input>--}%
-            %{--</g:formRemote>--}%
-
         </li>
         <li class="nav-item ml-5">
             <g:link action="login" controller="user" class="nav-link ml-5">

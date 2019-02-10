@@ -20,7 +20,8 @@
 <div class="row mt-5" style="color: white">
     <div class="col-md-2 ml-5 bg-info">
         <h1 class="text-center mt-3">${userCount}</h1>
-        <h4 class="text-center mb-3"><i class="fa fa-user"></i> Users</h4>
+            <h4 class="text-center mb-3"><i class="fa fa-user"></i> Users</h4>
+
     </div>
     <div class="col-md-2 ml-5 bg-info">
         <h1 class="text-center mt-3">${categoryCount}</h1>

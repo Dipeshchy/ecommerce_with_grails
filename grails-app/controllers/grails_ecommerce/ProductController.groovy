@@ -22,7 +22,8 @@ class ProductController {
         return brands
     }
 
-    def navbar() {
+    // method to return the number of items in cart in navbar
+    def cartSize() {
         def numberInCart
         if (session.cart == null) {
             numberInCart = 0
@@ -32,10 +33,16 @@ class ProductController {
             numberInCart = cart.size()
 
         }
-        def categoryList = Category.list()
-        render(template: 'navbar',model: [categoryList: categoryList, numberInCart: numberInCart])
+        return numberInCart
     }
 
+
+    // navbar
+    def navbar() {
+        render(template: 'navbar',model: [numberInCart: cartSize()])
+    }
+
+    // category side bar
     def categoryList() {
         def categoryList = Category.list()
         render(template: 'category_list',model: [categoryList: categoryList])
@@ -47,6 +54,8 @@ class ProductController {
 
         [productList: Product.list(),productCount:Product.count()]
     }
+
+    // main dashboard
     def dashboard() {
         def c = Product.createCriteria()
         def brands = c.list {
@@ -54,22 +63,13 @@ class ProductController {
                 distinct('brand')
             }
         }
-        def numberInCart
-        if (session.cart == null) {
-            numberInCart = 0
-
-        } else {
-            def cart = session.cart
-            numberInCart = cart.size()
-
-        }
-        [message: 'Featured Products',productList: Product.list(),categoryList: Category.list(),productbrands:brands, numberInCart: numberInCart]
+        [message: 'Featured Products',productList: Product.list(),categoryList: Category.list(),productbrands:brands, numberInCart: cartSize()]
     }
 
 
+    // selecting category
     def sortByCategory() {
         def category = params.categoryname
-
         def c = Product.createCriteria()
         def results = c.list {
             eq('categoryName',Category.findByCategoryName(category))
@@ -78,18 +78,25 @@ class ProductController {
     }
 
 
-
+    // search result by price range
     def searchByPrice() {
         def minimumPrice = params.minimumPrice as Double
         def maximumPrice = params.maximumPrice as Double
-
-        def c = Product.createCriteria()
-        def results = c.list {
-            between('price',minimumPrice,maximumPrice)
+        if (minimumPrice > maximumPrice) {
+            def results = []
+            render(template: 'featured_products',model: [productList: results ,message: "Invalid Price Range"])
+        } else {
+            def c = Product.createCriteria()
+            def results = c.list {
+                between('price', minimumPrice, maximumPrice)
+            }
+            def minPrice = minimumPrice as int
+            def maxPrice = maximumPrice as int
+            render(template: 'featured_products', model: [productList: results, message: "Search Results By Price between " + minPrice + " To " + maxPrice])
         }
-        render(template: 'featured_products',model: [ productList: results, message: "Search Results By Price between "+minimumPrice+" To "+maximumPrice])
     }
 
+    // search result by brand
     def searchByBrand() {
         def brand = params.brand
         if (brand=="all") {
@@ -104,34 +111,26 @@ class ProductController {
         }
     }
 
+    // search product By User Input
     def searchProduct() {
         def productItem = params.productToSearch
         def  c = Product.createCriteria()
         def resultProducts = c.list {
             like('productName',productItem)
         }
-            render(template: 'featured_products',model: [productList: resultProducts, message:"Searched Results of "+product ])
+            render(template: 'featured_products',model: [productList: resultProducts, message:"Searched Results of "+productItem ])
     }
 
+    // more detail info about the product
     def moreInfo() {
-        def numberInCart
-        if(session.cart == null) {
-            numberInCart = 0
-
-        }
-        else {
-            def cart = session.cart
-            numberInCart = cart.size()
-
-        }
         def productId = params.product
         def productInfo = Product.findById(productId)
-        render(view: 'moreInfo',model: [ numberInCart: numberInCart,product: productInfo,categoryList: Category.list()])
+        render(view: 'moreInfo',model: [ numberInCart: cartSize(),product: productInfo,categoryList: Category.list()])
     }
 
+    // method to add item to cart
     def addToCart() {
         def productId = params.product
-
         if(!session.cart) {
             def cart = []
             cart.add(productId)
@@ -142,99 +141,44 @@ class ProductController {
             cart.add(productId)
             session.cart = cart
         }
-        def numberInCart
-        if(session.cart == null) {
-            numberInCart = 0
-
-        }
-        else {
-            def cart = session.cart
-            numberInCart = cart.size()
-        }
-        render(view: 'cart',model: [numberInCart: numberInCart,categoryList: Category.list()])
+        render(view: 'cart',model: [numberInCart: cartSize(),categoryList: Category.list()])
     }
 
+    // to delete item from cart
     def deleteFromCart() {
         def productId = params.productId
         def cartList = session.cart
         cartList.remove(productId)
         session.cart = cartList
-
-        def numberInCart
-        if(session.cart == null) {
-            numberInCart = 0
-        }
-        else {
-            def cart = session.cart
-            numberInCart = cart.size()
-        }
-        render(view: 'cart',model: [ numberInCart: numberInCart, categoryList: Category.list()])
-
+        render(view: 'cart',model: [ numberInCart: cartSize(), categoryList: Category.list()])
     }
 
+    // to redirect to cart page
     def cart() {
-        def numberInCart
-        if(session.cart == null) {
-            numberInCart = 0
-
-        }
-        else {
-            def cart = session.cart
-            numberInCart = cart.size()
-
-        }
-        render(view: 'cart',model: [ numberInCart: numberInCart, categoryList: Category.list()])
+        render(view: 'cart',model: [ numberInCart: cartSize()])
     }
 
+    // to redirect user to confirm order
     def placeOrder() {
-        def numberInCart
-        if(session.cart == null) {
-            numberInCart = 0
-
-        }
-        else {
-            def cart = session.cart
-            numberInCart = cart.size()
-
-        }
-        render(view: 'placeOrder',model: [categoryList: Category.list(),numberInCart: numberInCart])
+        render(view: 'placeOrder',model: [numberInCart: cartSize()])
     }
 
-
+    // about the site
     def about() {
-        def numberInCart
-        if(session.cart == null) {
-            numberInCart = 0
-        }
-        else {
-            def cart = session.cart
-            numberInCart = cart.size()
-        }
-        [numberInCart: numberInCart,categoryList: Category.list()]
-    }
-    def contact() {
-        def numberInCart
-        if(session.cart == null) {
-            numberInCart = 0
-        }
-        else {
-            def cart = session.cart
-            numberInCart = cart.size()
-        }
-        [numberInCart: numberInCart,categoryList: Category.list()]
-    }
-    def faq() {
-        def numberInCart
-        if(session.cart == null) {
-            numberInCart = 0
-        }
-        else {
-            def cart = session.cart
-            numberInCart = cart.size()
-        }
-        [numberInCart: numberInCart,categoryList: Category.list()]
+        [numberInCart: cartSize()]
     }
 
+    // contact us page
+    def contact() {
+        [numberInCart: cartSize()]
+    }
+
+    // faq page
+    def faq() {
+        [numberInCart: cartSize()]
+    }
+
+    // to send main to user to confirm order
     def mailService
     @Transactional
     def confirmOrder() {

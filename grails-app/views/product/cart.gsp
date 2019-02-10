@@ -15,7 +15,7 @@
 <body>
 <g:render template="navbar"></g:render>
 <div class="container">
-<h4 class="mt-3">Products in Cart</h4>
+<h2 class="mt-3 text-center text-primary">Products in Cart</h2>
     <table class="container table table-striped mt-2">
         <tr>
             <th>S.N</th>
@@ -56,8 +56,5 @@
             <h4 class="text-danger">No Items in the Cart</h4>
         </div>
     </g:if>
-<div class="fixed-bottom ml-5 mr-5">
-    <g:render template="footer"></g:render>
-</div>
 </body>
 </html>

@@ -16,7 +16,7 @@ class OrderEcommerceController {
     }
 
     def show(OrderEcommerce orderEcommerceInstance) {
-        respond orderEcommerceInstance
+        forward(action: 'index')
     }
 
     def create() {
